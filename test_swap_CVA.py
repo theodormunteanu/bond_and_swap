@@ -92,3 +92,22 @@ def swap_tree_test():
     print("Binomial value of the swap",swap_values[-1][0])
     
 swap_tree_test()
+#%%
+def test_swap_FRAs():
+    import numpy.linalg as la
+    import numpy as np
+    A = np.array([[1.01,0,0,0,0],[0.02,1.02,0,0,0],[0.025,0.025,1.025,0,0],\
+                  [0.028,0.028,0.028,1.028,0],[0.036,0.036,0.036,0.036,1.036]])
+    b = np.array([1,1,1,1,1]).T
+    discounts = np.dot(la.inv(A),b)
+    forwards = [1/discounts[0]-1 if i==0 else discounts[i-1]/discounts[i]-1 \
+                for i in range(0,5)]
+    print(forwards)
+    FRAs = [100*(0.04-forwards[i])*discounts[i] for i in range(len(forwards))]
+    print(FRAs)
+    print(sum(FRAs))
+    import pandas as pd
+    indexes = ["F({0},{1})".format(i,i+1) for i in range(0,5)]
+    df = pd.DataFrame(FRAs,index=indexes,columns = ['value'])
+    print(df)
+test_swap_FRAs()
